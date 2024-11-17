@@ -1,25 +1,24 @@
-# Выполнял(а) урок на Windows, urwid не работает.
-PASSWORD = print('Введите пароль:'),input()
+import urwid
 
-def is_very_long(PASSWORD):
-    return len(PASSWORD)>12
+def is_very_long(password):
+    return len(password) > 12
 
-def has_digit(PASSWORD):
-    return any(n.isdigit() for n in PASSWORD)
+def has_digit(password):
+    return any(n.isdigit() for n in password)
 
-def has_letters(PASSWORD):
-    return any(n.isalpha() for n in PASSWORD)
+def has_letters(password):
+    return any(n.isalpha() for n in password)
 
-def has_upper_letters(PASSWORD):
-    return any(n.isupper() for n in PASSWORD)
+def has_upper_letters(password):
+    return any(n.isupper() for n in password)
 
-def has_lower_letters(PASSWORD):
-    return any(n.islower() for n in PASSWORD)
+def has_lower_letters(password):
+    return any(n.islower() for n in password)
 
-def has_symbols(PASSWORD):
-    return any(not n.isalnum() for n in PASSWORD)
+def has_symbols(password):
+    return any(not n.isalnum() for n in password)
 
-def main():
+def score(edit, new_password):
     score_password = 0
     all_functions = [
         has_lower_letters,
@@ -29,12 +28,19 @@ def main():
         is_very_long,
         has_symbols
     ]
-    for n in all_functions:
-        if n:
-            score_password +=2
-    print(f'Рейтинг пароля - {score_password}')
+    for correct in all_functions:
+        if correct(new_password):
+            score_password += 2
+    score_text.set_text(f'Рейтинг пароля: {score_password}')
 
+def password():
+    global score_text
+    ask = urwid.Edit("Введите пароль: ", mask='*')
+    score_text = urwid.Text("Рейтинг пароля: 0")
+    menu = urwid.Pile([ask, score_text])
+    menu = urwid.Filler(menu, valign='top')
+    urwid.connect_signal(ask, 'change', score)
+    urwid.MainLoop(menu).run()
 
-if __name__ == "__main__":
-     main()
-
+if __name__ == '__main__':
+    password()
